@@ -6,6 +6,17 @@ from discord.ext import commands
 MAX_TIMER = 10
 
 
+async def run_timer(seconds):
+    is_start = True
+    while is_start:
+        print(seconds)
+        mins, secs = divmod(seconds, 60)
+        timer = '{:02d}:{:02d}'.format(mins, secs)
+        print(timer, end="\r")
+        await asyncio.sleep(seconds)
+        is_start = False
+
+
 class Timer(commands.Cog):
     def __init__(self, discord_bot):
         self.bot = discord_bot
@@ -29,18 +40,16 @@ class Timer(commands.Cog):
         await self.countdown(num, unit, ctx.channel.id)
 
     async def countdown(self, num, unit, channel_id):
+        # Get total seconds
         total_seconds = num * 60 if unit == 'min' else num
+        # Add channel id to set so that only one timer is allowed per channel
         self.running_channels.add(channel_id)
-        is_start = True
-        while is_start:
-            print(total_seconds)
-            mins, secs = divmod(total_seconds, 60)
-            timer = '{:02d}:{:02d}'.format(mins, secs)
-            print(timer, end="\r")
-            await asyncio.sleep(total_seconds)
-            is_start = False
+        # Start timer thread
+        await run_timer(total_seconds)
+        # Send message when timer is done
         channel = self.bot.get_channel(channel_id)
         await channel.send("Times up")
+        # Remove channel from set to allow new timer
         self.running_channels.remove(channel_id)
 
     def is_timer_allowed(self, channel_id):
