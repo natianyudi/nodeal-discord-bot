@@ -41,7 +41,7 @@ class Timer(commands.Cog):
             is_start = False
         channel = self.bot.get_channel(channel_id)
         await channel.send("Times up")
-        self.running_channels.remove(channel)
+        self.running_channels.remove(channel_id)
 
     def is_timer_allowed(self, channel_id):
         if len(self.running_channels) >= MAX_TIMER:
