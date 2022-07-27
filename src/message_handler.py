@@ -16,7 +16,7 @@ async def on_ready():
 
 
 @bot.listen('on_message')
-async def whatever_you_want_to_call_it(message):
+async def listen_messages(message):
     if message.author == bot.user:
         return
 
